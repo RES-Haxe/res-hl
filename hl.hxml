@@ -1,0 +1,4 @@
+-lib res
+-lib hlsdl
+-lib format
+--hl bin/hlboot.hl
