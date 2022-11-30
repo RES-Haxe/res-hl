@@ -46,7 +46,7 @@ class BIOS extends res.bios.BIOS {
 	var _window:Window;
 	var _res:RES;
 
-	public function new(?windowTitle:String, ?scale:Int = 1) {
+	public function new(?windowTitle:String = 'RES (HashLink)', ?scale:Int = 1) {
 		super('Hashlink (SDL)');
 
 		_windowTitle = windowTitle;
