@@ -1,5 +1,6 @@
 package res.bios.hl;
 
+import res.input.Key;
 import haxe.Timer;
 import haxe.io.Float32Array;
 import res.audio.IAudioBuffer;
@@ -46,11 +47,83 @@ class BIOS extends res.bios.BIOS {
 	var _window:Window;
 	var _res:RES;
 
+	final CODEMAP = [for (i in 0...2048) i];
+
 	public function new(?windowTitle:String = 'RES (HashLink)', ?scale:Int = 1) {
 		super('Hashlink (SDL)');
 
 		_windowTitle = windowTitle;
 		_scale = scale;
+
+		initChars();
+	}
+
+	function initChars() {
+		// ASCII
+		for (i in 0...26)
+			CODEMAP[97 + i] = Key.A + i;
+		for (i in 0...12)
+			CODEMAP[1058 + i] = Key.F1 + i;
+		for (i in 0...12)
+			CODEMAP[1104 + i] = Key.F13 + i;
+
+		// NUMPAD
+		CODEMAP[1084] = Key.NUMPAD_DIV;
+		CODEMAP[1085] = Key.NUMPAD_MULT;
+		CODEMAP[1086] = Key.NUMPAD_SUB;
+		CODEMAP[1087] = Key.NUMPAD_ADD;
+		CODEMAP[1088] = Key.NUMPAD_ENTER;
+		for (i in 0...9)
+			CODEMAP[1089 + i] = Key.NUMPAD_1 + i;
+		CODEMAP[1098] = Key.NUMPAD_0;
+		CODEMAP[1099] = Key.NUMPAD_DOT;
+
+		// EXTRA
+		var keys = [
+			1225 => Key.LSHIFT,
+			1229 => Key.RSHIFT,
+			1224 => Key.LCTRL,
+			1228 => Key.RCTRL,
+			1226 => Key.LALT,
+			1230 => Key.RALT,
+			1227 => Key.LEFT_WINDOW_KEY,
+			1231 => Key.RIGHT_WINDOW_KEY,
+			1075 => Key.PGUP,
+			1078 => Key.PGDOWN,
+			1077 => Key.END,
+			1074 => Key.HOME,
+			1080 => Key.LEFT,
+			1082 => Key.UP,
+			1079 => Key.RIGHT,
+			1081 => Key.DOWN,
+			1073 => Key.INSERT,
+			127 => Key.DELETE,
+			1085 => Key.NUMPAD_MULT,
+			1087 => Key.NUMPAD_ADD,
+			1088 => Key.NUMPAD_ENTER,
+			1086 => Key.NUMPAD_SUB,
+			1099 => Key.NUMPAD_DOT,
+			1084 => Key.NUMPAD_DIV,
+			39 => Key.QWERTY_QUOTE,
+			44 => Key.QWERTY_COMMA,
+			45 => Key.QWERTY_MINUS,
+			46 => Key.QWERTY_PERIOD,
+			47 => Key.QWERTY_SLASH,
+			59 => Key.QWERTY_SEMICOLON,
+			61 => Key.QWERTY_EQUALS,
+			91 => Key.QWERTY_BRACKET_LEFT,
+			92 => Key.QWERTY_BACKSLASH,
+			93 => Key.QWERTY_BRACKET_RIGHT,
+			96 => Key.QWERTY_TILDE,
+			167 => Key.QWERTY_BACKSLASH,
+			1101 => Key.CONTEXT_MENU,
+			1057 => Key.CAPS_LOCK,
+			1071 => Key.SCROLL_LOCK,
+			1072 => Key.PAUSE_BREAK,
+			1083 => Key.NUM_LOCK,
+		];
+		for (sdl in keys.keys())
+			CODEMAP[sdl] = keys.get(sdl);
 	}
 
 	function gameLoop() {
@@ -64,10 +137,16 @@ class BIOS extends res.bios.BIOS {
 
 			switch (event.type) {
 				case KeyDown:
-					_res.keyboard.keyDown(event.keyCode);
+					var keyCode = event.keyCode;
+					if (keyCode & (1 << 30) != 0)
+						keyCode = (keyCode & ((1 << 30) - 1)) + 1000;
+					_res.keyboard.keyDown(CODEMAP[keyCode]);
 					return true;
 				case KeyUp:
-					_res.keyboard.keyUp(event.keyCode);
+					var keyCode = event.keyCode;
+					if (keyCode & (1 << 30) != 0)
+						keyCode = (keyCode & ((1 << 30) - 1)) + 1000;
+					_res.keyboard.keyUp(CODEMAP[keyCode]);
 					return true;
 				case TextInput:
 					// Copied from Heaps :[
