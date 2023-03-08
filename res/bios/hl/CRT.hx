@@ -30,6 +30,8 @@ class CRT extends res.display.CRT {
 	}
 
 	public function beam(x:Int, y:Int, index:Int, palette:Palette) {
+		if (index == 0)
+			return;
 		pixelsData.setI32((y * width + x) * 4, palette.get(index).output);
 	}
 }
