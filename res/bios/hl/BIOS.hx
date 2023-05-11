@@ -1,11 +1,12 @@
 package res.bios.hl;
 
-import res.input.Key;
 import haxe.Timer;
 import haxe.io.Float32Array;
+import hl.UI;
 import res.audio.IAudioBuffer;
 import res.audio.IAudioStream;
 import res.bios.common.FileStorage;
+import res.input.Key;
 import res.storage.Storage;
 import sdl.Cursor;
 import sdl.GL;
@@ -207,6 +208,8 @@ class BIOS extends res.bios.BIOS {
 	}
 
 	function initOpenGL() {
+		UI.closeConsole();
+
 		Sdl.init();
 
 		_window = new Window(_windowTitle, _res.width * _scale, _res.height * _scale);
