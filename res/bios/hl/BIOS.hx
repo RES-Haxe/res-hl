@@ -48,13 +48,25 @@ class BIOS extends res.bios.BIOS {
 	var _window:Window;
 	var _res:RES;
 
+	var _frameDelay:(dt:Float) -> Int;
+
 	final CODEMAP = [for (i in 0...2048) i];
 
-	public function new(?windowTitle:String = 'RES (HashLink)', ?scale:Int = 1) {
+	/**
+		HashLink BIOS constructor
+
+		@param windowTitle Title of the window
+		@param scale How much the image must be initially scaled
+		@param frameDelay A function accepting delta time in seconds
+		and returning the amount of milliseconds to
+		wait before the next update
+	**/
+	public function new(?windowTitle:String = 'RES (HashLink)', ?scale:Int = 1, ?frameDelay:(dt:Float) -> Int) {
 		super('Hashlink (SDL)');
 
 		_windowTitle = windowTitle;
 		_scale = scale;
+		_frameDelay = frameDelay ?? (dt) -> 16;
 
 		initChars();
 	}
@@ -194,15 +206,16 @@ class BIOS extends res.bios.BIOS {
 		})) {
 			final currentTime = Timer.stamp();
 			final delta = currentTime - lastTime;
-
 			lastTime = currentTime;
+			final delay = _frameDelay(delta);
+
 			GL.clear(GL.COLOR_BUFFER_BIT);
 			audio.update(delta);
 			_res.update(delta);
 			_res.render();
 			GL.drawArrays(GL.TRIANGLE_STRIP, 0, 4);
 			_window.present();
-			Sdl.delay(Std.int(Math.max(0, ((1 / 60) - delta) * 1000)));
+			Sdl.delay(delay);
 		}
 		Sdl.quit();
 	}
