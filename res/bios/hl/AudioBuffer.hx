@@ -26,7 +26,7 @@ class AudioBuffer implements IAudioBuffer {
 
 		for (_ => sample in audioStream) {
 			final avgAmp = MathTools.avg([for (_ => amp in sample) amp]);
-			bytesOutput.writeInt16(Tools.quantize(avgAmp, 16));
+			bytesOutput.writeInt16(Tools.quantize(avgAmp, BPS16));
 		}
 
 		final bufId = Bytes.alloc(4);
