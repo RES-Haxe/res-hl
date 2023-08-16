@@ -3,7 +3,7 @@ package res.bios.hl;
 import haxe.io.Bytes;
 import sdl.GL;
 
-class CRT extends res.display.CRT {
+class CRT extends res.CRT {
 	var texture:Texture;
 
 	var pixelsData:hl.Bytes;

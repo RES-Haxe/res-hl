@@ -3,10 +3,10 @@ package res.bios.hl;
 import haxe.io.Bytes;
 import haxe.io.BytesOutput;
 import openal.AL;
+import res.Mth;
 import res.audio.IAudioBuffer;
 import res.audio.IAudioStream;
 import res.audio.Tools;
-import res.tools.MathTools;
 
 class AudioBuffer implements IAudioBuffer {
 	public final numChannel:Int;
@@ -25,7 +25,7 @@ class AudioBuffer implements IAudioBuffer {
 		final bytesOutput = new BytesOutput();
 
 		for (_ => sample in audioStream) {
-			final avgAmp = MathTools.avg([for (_ => amp in sample) amp]);
+			final avgAmp = Mth.avg([for (_ => amp in sample) amp]);
 			bytesOutput.writeInt16(Tools.quantize(avgAmp, BPS16));
 		}
 
