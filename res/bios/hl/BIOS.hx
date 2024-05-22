@@ -23,7 +23,7 @@ out vec2 texCoord;
 void main()
 {
     gl_Position = vec4(inPos, 0.0f, 1.0f);
-	texCoord = inTexCoord;
+    texCoord = inTexCoord;
 }';
 final FRAGMENT_SHADER:String = '#version 150
 
@@ -38,6 +38,8 @@ void main()
 }';
 
 class BIOS extends res.bios.BIOS {
+	public var minFrameDelay:Int = 1;
+
 	final _scale:Int;
 	final _windowTitle:String;
 
@@ -47,8 +49,6 @@ class BIOS extends res.bios.BIOS {
 	var _quit:Bool = false;
 	var _window:Window;
 	var _res:RES;
-
-	var _frameDelay:(dt:Float) -> Int;
 
 	final CODEMAP = [for (i in 0...2048) i];
 
@@ -61,12 +61,11 @@ class BIOS extends res.bios.BIOS {
 		and returning the amount of milliseconds to
 		wait before the next update
 	**/
-	public function new(?windowTitle:String = 'RES (HashLink)', ?scale:Int = 1, ?frameDelay:(dt:Float) -> Int) {
+	public function new(?windowTitle:String = 'RES (HashLink)', ?scale:Int = 1) {
 		super('Hashlink (SDL)');
 
 		_windowTitle = windowTitle;
 		_scale = scale;
-		_frameDelay = frameDelay ?? (dt) -> 16;
 
 		initChars();
 	}
@@ -207,7 +206,6 @@ class BIOS extends res.bios.BIOS {
 			final currentTime = Timer.stamp();
 			final delta = currentTime - lastTime;
 			lastTime = currentTime;
-			final delay = _frameDelay(delta);
 
 			GL.clear(GL.COLOR_BUFFER_BIT);
 			audio.update(delta);
@@ -215,7 +213,7 @@ class BIOS extends res.bios.BIOS {
 			_res.render();
 			GL.drawArrays(GL.TRIANGLE_STRIP, 0, 4);
 			_window.present();
-			Sdl.delay(delay);
+			Sdl.delay(minFrameDelay);
 		}
 		Sdl.quit();
 	}
